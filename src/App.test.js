@@ -40,7 +40,7 @@ test('counter starts at 0', () => {
   expect(initialCounterState).toBe(0);
 });
 
-test('clicking button increments display', () => {
+test('clicking increment button increments display', () => {
   const counter = 7;
   const wrapper = setup(null, { counter });
   const button = findByTestAttr(wrapper, 'increment-button');
@@ -48,3 +48,43 @@ test('clicking button increments display', () => {
   const counterDisplay = findByTestAttr(wrapper, 'counter-display');
   expect(counterDisplay.text()).toContain(counter + 1);
 });
+
+test('render decrement button', () => {
+  const wrapper = setup();
+  const button = findByTestAttr(wrapper, 'decrement-button');
+  expect(button.length).toBe(1);
+});
+
+test('clicking decrement button decrements display', () => {
+  const counter = 7;
+  const wrapper = setup(null, { counter });
+  const button = findByTestAttr(wrapper, 'decrement-button');
+  button.simulate('click');
+  const counterDisplay = findByTestAttr(wrapper, 'counter-display');
+  expect(counterDisplay.text()).toContain(counter - 1);
+});
+
+test('clicking decrement will not decrement below 0', () => {
+  const counter = 0;
+  const wrapper = setup(null, { counter });
+  const button = findByTestAttr(wrapper, 'decrement-button');
+  button.simulate('click');
+  expect(wrapper.state('counter')).toBe(0);
+});
+
+test('if counter at 0 and decrement is clicked, an error message is displayed', () => {
+  const counter = 0;
+  const wrapper = setup(null, { counter });
+  const button = findByTestAttr(wrapper, 'decrement-button');
+  button.simulate('click');
+  const errorMessage = findByTestAttr(wrapper, 'error-message');
+  expect(errorMessage.exists()).toBe(true);
+});
+
+test('if error is shown and increment button is clicked, clear the error message', ()=> {
+  const wrapper = setup(null, {showError: true});
+  const button = findByTestAttr(wrapper, 'increment-button');
+  button.simulate('click');
+  const errorMessage = findByTestAttr(wrapper, 'error-message');
+  expect(errorMessage.exists()).toBe(false);
+})
